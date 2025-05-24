@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import React, { useState, useRef } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -160,25 +160,6 @@ export default function Home() {
   const [showGarminSuggestions, setShowGarminSuggestions] = useState(false)
   const garminInputRef = useRef<HTMLInputElement>(null)
 
-  const generateGPX = (coords: Coordinate[]) => {
-    const gpxHeader = `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="Fake Run" xmlns="http://www.topografix.com/GPX/1/1">
-  <trk>
-    <name>Fake Run ${activityType === "run" ? "Run" : "Ride"}</name>
-    <trkseg>
-`
-    const gpxFooter = `
-    </trkseg>
-  </trk>
-</gpx>`
-
-    const gpxPoints = coords.map(([lon, lat]) => 
-      `      <trkpt lat="${lat}" lon="${lon}"></trkpt>`
-    ).join('\n')
-
-    return gpxHeader + gpxPoints + gpxFooter
-  }
-
   const formatDuration = (minutes: number): string => {
     const hours = Math.floor(minutes / 60)
     const mins = Math.floor(minutes % 60)
@@ -193,7 +174,7 @@ export default function Home() {
   const handlePaceChange = (newPace: number[]) => {
     setPace(newPace)
     if (activityType === "run") {
-      setRouteStats(prev => ({
+      setRouteStats((prev: RouteStats) => ({
         ...prev,
         duration: prev.distance * newPace[0]
       }))
@@ -203,7 +184,7 @@ export default function Home() {
   const handleSpeedChange = (newSpeed: number[]) => {
     setSpeed(newSpeed)
     if (activityType === "bike") {
-      setRouteStats(prev => ({
+      setRouteStats((prev: RouteStats) => ({
         ...prev,
         duration: prev.distance / newSpeed[0] * 60
       }))
@@ -229,7 +210,6 @@ export default function Home() {
   function interpolateRoutePoints(coords: Coordinate[], targetSpacing = 10): Coordinate[] {
     if (coords.length < 2) return coords;
     const toRad = (deg: number) => deg * Math.PI / 180;
-    const toDeg = (rad: number) => rad * 180 / Math.PI;
     const R = 6371000; // meters
     const result: Coordinate[] = [];
     for (let i = 0; i < coords.length - 1; i++) {
@@ -259,7 +239,8 @@ export default function Home() {
     <main className="flex flex-col min-h-screen bg-white">
       <header className="w-full flex flex-col items-center py-4 mb-2 md:mb-4">
         <div className="flex flex-col items-center gap-2">
-          <img src="/Fake_Run_logo.png" alt="Fake Run Logo" className="w- h-16 md:w-40 md:h-40 object-contain" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/Fake_Run_logo.png" alt="Fake Run Logo" className="w-16 h-16 md:w-40 md:h-40 object-contain" />
         </div>
       </header>
       <div className="flex flex-col md:flex-row flex-1 w-full">
@@ -290,7 +271,7 @@ export default function Home() {
                 <span className={cn("text-sm", activityType === "run" ? "text-orange-500" : "text-gray-400")}>Run</span>
                 <Switch 
                   checked={activityType === "bike"}
-                  onCheckedChange={(checked) => setActivityType(checked ? "bike" : "run")}
+                  onCheckedChange={(checked: boolean) => setActivityType(checked ? "bike" : "run")}
                 />
                 <span className={cn("text-sm", activityType === "bike" ? "text-orange-500" : "text-gray-400")}>Bike</span>
               </div>
@@ -446,7 +427,7 @@ export default function Home() {
                   <Input
                     ref={garminInputRef}
                     value={garminModel}
-                    onChange={e => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       setGarminModel(e.target.value);
                       setShowGarminSuggestions(true);
                     }}

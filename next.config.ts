@@ -3,6 +3,7 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   webpack: (config: Configuration) => {
+    config.resolve = config.resolve || {};
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,

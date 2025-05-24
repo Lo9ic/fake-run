@@ -1,9 +1,3 @@
-# <div align="center">
-  <img src="/Fake_Run_logo.png" alt="Fake Run Logo" width="120" />
-  <br/>
-  <b>Fake Run</b>
-</div>
-
 🏃‍♂️ **Fake Run** is a web app to generate realistic GPX files for Strava, Garmin, and other platforms. Perfect for testing, fun, or sharing creative routes!
 
 ## Features
